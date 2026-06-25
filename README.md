@@ -16,9 +16,8 @@ The work is layered on top of the framework introduced by:
 > *The Disagreement Problem in Explainable Machine Learning: A Practitioner's
 > Perspective.* Transactions on Machine Learning Research.
 
-Two artifacts live alongside the code:
-[`2202.01602v6-4.pdf`](./) (the framework paper) and
-[`xai_disagreement_poster (1).pdf`](./xai_disagreement_poster%20(1).pdf) (our poster).
+Our poster lives alongside the code:
+[`xai_disagreement_poster (1).pdf`](./xai_disagreement_poster%20(1).pdf).
 
 ---
 
@@ -105,9 +104,9 @@ into families that agree with their own kind. Details below.
 | Variant | Train acc | Test acc | Gen. gap |
 |---|---|---|---|
 | A — Control | 0.884 | 0.836 | 0.048 |
-| C — Feature-Noise | 0.846 | 0.834 | 0.012 |
-| D — Label-Poison | 0.817 | 0.789 | 0.028 |
-| B — Overfit | 0.848 | 0.797 | 0.051 |
+| C — Feature-Noise | 0.785 | 0.755 | 0.031 |
+| D — Label-Poison | 0.783 | 0.705 | 0.077 |
+| B — Overfit | 0.658 | 0.630 | 0.029 |
 
 **MNIST (CNN), k = 8**
 
@@ -118,29 +117,31 @@ into families that agree with their own kind. Details below.
 | D — Label-Poison | 0.965 | 0.957 | 0.008 |
 | B — Overfit | 0.961 | 0.958 | 0.003 |
 
-*In short:* on Adult Income the gaps behave as designed — the Overfit model (B)
-has the largest train/test gap and Feature-Noise (C) the smallest. On MNIST even
-the "overfit" CNN generalizes well, so every gap is tiny — which is why the MNIST
-effects below come out smaller.
+*In short:* on Adult Income the Label-Poison model (D) shows the largest
+train/test gap (0.077) and the Overfit model (B) the smallest (0.029) — with the
+current corruption levels the gap ordering isn't the clean A < C < D < B the
+design intended. On MNIST even the "overfit" CNN generalizes well, so every gap is
+tiny — which is why the MNIST effects below come out smaller.
 
 ### Finding 1 — Consensus tracks generalization
 
-Mean pairwise SRA is highest for the well-generalizing controls and lowest for
-the overfit model on both datasets.
+Mean pairwise SRA is lowest for the overfit model (B) on both datasets, and
+highest for the well-generalizing control on Adult (on MNIST the feature-noise
+variant C edges out the control).
 
 | Variant | Adult SRA | MNIST SRA |
 |---|---|---|
-| A — Control | 0.193 | 0.329 |
-| C — Feature-Noise | 0.201 | 0.350 |
-| D — Label-Poison | 0.187 | 0.343 |
-| B — Overfit | 0.190 | 0.309 |
+| A — Control | 0.614 | 0.329 |
+| C — Feature-Noise | 0.580 | 0.350 |
+| D — Label-Poison | 0.559 | 0.343 |
+| B — Overfit | 0.546 | 0.309 |
 
 ![Finding 1 — SRA across the generalization spectrum](figures/finding1_sra.png)
 
-Control → Overfit SRA decline: **1.8%** (Adult), **6.1%** (MNIST). The effect is
-real but modest, and not strictly monotonic — the feature-noise variant (C)
-edges out the control, which we read as label noise hurting consensus more than
-input noise.
+Control → Overfit SRA decline: **11.2%** (Adult), **6.1%** (MNIST). On Adult the
+decline is clean and monotonic (A > C > D > B); on MNIST it is modest and not
+strictly monotonic — the feature-noise variant (C) edges out the control, which
+we read as label noise hurting consensus more than input noise.
 
 *In short:* explanation methods agree most on a healthy model and least on an
 overfit one — evidence that disagreement is partly about the model, not just the
@@ -154,10 +155,10 @@ degraded models give flat, near-zero attributions, so methods can trivially
 
 | Variant | Adult | MNIST |
 |---|---|---|
-| A | −0.14 | 0.01 |
-| C | 0.11 | 0.01 |
-| D | −0.19 | −0.19 |
-| B | −0.07 | 0.17 |
+| A | −0.06 | 0.01 |
+| C | 0.01 | 0.01 |
+| D | −0.10 | −0.19 |
+| B | −0.13 | 0.17 |
 
 ![Finding 2 — entropy vs SRA correlation per variant](figures/finding2_uncertainty.png)
 
@@ -170,14 +171,16 @@ a trustworthy one.
 
 ### Finding 3 — Family-structured disagreement
 
-Sign Agreement is dominated by a single pairing on both datasets: KernelSHAP and
-SmoothGrad agree far more than the gradient/perturbation cross-pairs.
+Sign Agreement is dominated by a single pairing on both datasets — but a
+different pair each time: on Adult the two gradient methods IG and SmoothGrad
+agree almost perfectly (~0.96), while on MNIST KernelSHAP and SmoothGrad lead
+(~0.54). Either way one pair sits far above the cross-pairs.
 
 | Pair (mean SA) | Adult | MNIST |
 |---|---|---|
-| KernelSHAP–SmoothGrad | ~0.50 | ~0.54 |
-| IG–SmoothGrad | ~0.08 | ~0.31 |
-| LIME–IG | ~0.10 | ~0.31 |
+| IG–SmoothGrad | ~0.96 | ~0.31 |
+| KernelSHAP–SmoothGrad | ~0.07 | ~0.54 |
+| LIME–IG | ~0.09 | ~0.31 |
 
 ![Finding 3 — sign agreement by method pair](figures/finding3_families.png)
 
@@ -186,9 +189,10 @@ cluster tightly (Grad–SmoothGrad SRA 0.60) and LIME–KernelSHAP cluster (SRA
 0.52), confirming the metric implementations behave as expected before we apply
 them to our own models.
 
-*In short:* methods agree mostly with others of the same type (gradient-based vs.
-perturbation-based), so within-family agreement reflects shared assumptions, not
-proof that the explanation is correct.
+*In short:* the strongest agreement on Adult is between two gradient methods
+(IG, SmoothGrad), consistent with a same-family effect; MNIST is messier. Either
+way, high within-pair agreement reflects shared assumptions, not proof that the
+explanation is correct.
 
 ---
 
