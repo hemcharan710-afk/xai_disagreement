@@ -1,0 +1,15 @@
+# virtual env
+.venv/
+
+# python
+__pycache__/
+*.pyc
+
+# cached datasets (re-downloaded on first run; too large for git)
+*/data/
+
+# generated figures ARE tracked (research outputs) — comment the next line to ignore
+# */figures/
+
+# os
+.DS_Store

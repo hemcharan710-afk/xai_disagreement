@@ -1,0 +1,16 @@
+# Core (the metrics library needs only these two)
+numpy<2
+scipy
+
+# Studies (models, data, plotting)
+scikit-learn
+pandas
+matplotlib
+torch
+torchvision
+
+# Notes:
+# * numpy is pinned <2 because the prebuilt torch/scikit-learn wheels in many
+#   environments are still compiled against the NumPy 1.x ABI.
+# * No `lime` / `shap` / `captum` needed: LIME, KernelSHAP and the gradient
+#   methods are implemented from scratch in xai_disagreement/explainers.py.
