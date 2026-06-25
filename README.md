@@ -136,7 +136,7 @@ variant C edges out the control).
 | D — Label-Poison | 0.559 | 0.343 |
 | B — Overfit | 0.546 | 0.309 |
 
-![Finding 1 — SRA across the generalization spectrum](figures/finding1_sra.png)
+![Finding 1 — SRA across the generalization spectrum](figures/f1.png)
 
 Control → Overfit SRA decline: **11.2%** (Adult), **6.1%** (MNIST). On Adult the
 decline is clean and monotonic (A > C > D > B); on MNIST it is modest and not
@@ -160,7 +160,7 @@ degraded models give flat, near-zero attributions, so methods can trivially
 | D | −0.10 | −0.19 |
 | B | −0.13 | 0.17 |
 
-![Finding 2 — entropy vs SRA correlation per variant](figures/finding2_uncertainty.png)
+![Finding 2 — entropy vs SRA correlation per variant](figures/f2.png)
 
 The sign flips across variants — high agreement is not evidence of an
 informative explanation.
@@ -182,7 +182,7 @@ agree almost perfectly (~0.96), while on MNIST KernelSHAP and SmoothGrad lead
 | KernelSHAP–SmoothGrad | ~0.07 | ~0.54 |
 | LIME–IG | ~0.09 | ~0.31 |
 
-![Finding 3 — sign agreement by method pair](figures/finding3_families.png)
+![Finding 3 — sign agreement by method pair](figures/f3.png)
 
 On COMPAS the framework check shows the same family structure: gradient methods
 cluster tightly (Grad–SmoothGrad SRA 0.60) and LIME–KernelSHAP cluster (SRA
